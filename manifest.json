@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "ChatGPT Question Logger",
+    "version": "1.0",
+    "description": "Logs questions asked to ChatGPT and saves them to a file",
+    "permissions": [
+      "storage",
+      "downloads"
+    ],
+    "host_permissions": [
+      "https://chatgpt.com/*",
+      "https://chat.openai.com/*"
+    ],
+    "content_scripts": [
+      {
+        "matches": [
+          "https://chatgpt.com/*",
+          "https://chat.openai.com/*",
+          "https://*.chatgpt.com/*",
+          "https://*.openai.com/*"
+        ],
+        "js": ["content.js"],
+        "run_at": "document_end"
+      }
+    ],
+    "action": {
+      "default_popup": "popup.html"
+    }
+  }

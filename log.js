@@ -28,53 +28,55 @@ let mut = new MutationObserver((mutations, observer) => {
         author: "",
         message: "",
       };
-      try {
-        let _ = article.getElementsByTagName("h5"); // user
+
+      let messageElement = article.getElementsByClassName(
+        "whitespace-pre-wrap"
+      )[0];
+      if (messageElement) {
         data["author"] = "user";
-        data["message"] = article.getElementsByClassName(
-          "whitespace-pre-wrap"
-        )[0].innerText;
-      } catch {
+        data["message"] = messageElement.innerText;
+      } else {
         data["author"] = "chatgpt";
-        data["message"] = article.getElementsByClassName(
+        let chatGptElement = article.getElementsByClassName(
           "markdown prose dark:prose-invert w-full break-words dark"
-        )[0].innerText;
+        )[0];
+        if (chatGptElement) {
+          data["message"] = chatGptElement.innerText;
+        } else {
+          console.warn("Could not identify author or message content.");
+          continue;
+        }
       }
       conversation.push(data);
     }
 
     console.log(conversation);
 
-    // Save student messages to a text file
-    saveMessages(conversation);
+    // Save ChatGPT messages to a text file
+    saveChatGptMessages(conversation);
   }
 });
 
-// Questions students asked
-function saveMessages(conversation) {
-  let savedMessages = "";
+// Save ChatGPT messages
+function saveChatGptMessages(conversation) {
+  let chatGptMessages = "";
   for (const message of conversation) {
-    if (message.author === "author") {
-      savedMessages += message.message + "\n\n";
+    if (message.author === "user") {
+      chatGptMessages += message.message + "\n\n";
     }
   }
 
-  // Write the student messages to a text file
-  if (savedMessages !== "") {
-    const blob = new Blob([savedMessages], { type: "text/plain" });
+  // Write the ChatGPT messages to a text file
+  if (chatGptMessages !== "") {
+    const blob = new Blob([chatGptMessages], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "saved_messages.txt";
+    a.download = "chatgpt_messages.txt";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    console.log("Student messages saved to saved_messages.txt");
+    console.log("ChatGPT messages saved to chatgpt_messages.txt");
   }
 }
-
-mut.observe(document.getElementsByTagName("main")[0], {
-  childList: true,
-  subtree: false,
-});
