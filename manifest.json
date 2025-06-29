@@ -1,0 +1,23 @@
+{
+    "manifest_version": 3,
+    "name": "GPT Logger",
+    "version": "0.0.1",
+    "description": "A browser extension which logs conversation history on chatgpt.com for research purposes. Note that pre-existing conversations before installing this extention will not be logged.",
+    "content_scripts": [
+        {
+            "matches": [
+                "*://chatgpt.com/*"
+            ],
+            "js": [
+                "polyfill.js",
+                "log.js"
+            ]
+        }
+    ],
+    "background": {
+        "scripts": [
+            "polyfill.js",
+            "back.js"
+        ]
+    }
+}
